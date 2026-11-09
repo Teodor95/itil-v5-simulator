@@ -1,0 +1,1373 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>ITIL® Foundation Version 5 — Practice & Exam Portal</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            color-scheme: dark;
+        }
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "SF Pro Text", "Segoe UI", Roboto, sans-serif;
+        }
+        body {
+            background-color: #0b1120;
+            color: #f8fafc;
+            padding-top: env(safe-area-inset-top, 0px);
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+        @keyframes pulse-red {
+            0%, 100% {
+                background-color: rgba(127, 29, 29, 0.85);
+                border-color: #ef4444;
+                transform: scale(1);
+            }
+            50% {
+                background-color: rgba(185, 28, 28, 0.95);
+                border-color: #f87171;
+                transform: scale(1.03);
+            }
+        }
+        .timer-critical {
+            animation: pulse-red 1.2s infinite ease-in-out;
+        }
+        .option-btn {
+            transition: all 0.16s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .option-btn:not(:disabled):hover {
+            border-color: #3b82f6;
+            background-color: #1e293b;
+        }
+        .option-btn:not(:disabled):active {
+            transform: scale(0.99);
+        }
+        .option-btn.correct {
+            background-color: rgba(6, 78, 59, 0.75) !important;
+            border-color: #10b981 !important;
+            color: #d1fae5 !important;
+        }
+        .option-btn.correct .opt-badge {
+            background-color: #10b981 !important;
+            color: #022c22 !important;
+        }
+        .option-btn.wrong {
+            background-color: rgba(127, 29, 29, 0.75) !important;
+            border-color: #ef4444 !important;
+            color: #fee2e2 !important;
+        }
+        .option-btn.wrong .opt-badge {
+            background-color: #ef4444 !important;
+            color: #ffffff !important;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between selection:bg-blue-600 selection:text-white">
+
+    <!-- ================= LOGIN SCREEN ================= -->
+    <div id="login-screen" class="min-h-screen flex flex-col items-center justify-center px-4 py-8">
+        <div class="w-full max-w-md bg-slate-900/90 border border-slate-800 rounded-2xl shadow-2xl p-6 sm:p-8 backdrop-blur-md">
+            <!-- Brand Header -->
+            <div class="flex items-center gap-3 mb-6">
+                <div class="w-11 h-11 rounded-xl bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-extrabold text-lg shadow-inner">
+                    v5
+                </div>
+                <div>
+                    <span class="text-xs font-semibold uppercase tracking-wider text-blue-400 block">Official Study Companion</span>
+                    <h1 class="text-lg sm:text-xl font-extrabold text-white leading-tight">ITIL® Foundation Version 5</h1>
+                </div>
+            </div>
+
+            <p class="text-sm text-slate-400 mb-5">
+                Sign in to access the interactive <strong class="text-slate-200">Practice &amp; Exam Portal</strong> (40-Question Timed Exam Simulation &amp; Full 77-Question Study Pool with PDF Rationales).
+            </p>
+
+            <!-- Login Form -->
+            <form id="login-form" class="space-y-4" novalidate>
+                <div>
+                    <label for="username" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">Username</label>
+                    <input
+                        type="text"
+                        id="username"
+                        autocomplete="off"
+                        placeholder="Enter your username"
+                        required
+                        class="w-full bg-slate-950 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition"
+                    >
+                </div>
+
+                <div>
+                    <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-slate-300 mb-1.5">Password</label>
+                    <input
+                        type="password"
+                        id="password"
+                        autocomplete="current-password"
+                        placeholder="Enter your password"
+                        required
+                        class="w-full bg-slate-950 border border-slate-700 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/30 rounded-xl px-4 py-3 text-sm text-white placeholder-slate-500 outline-none transition"
+                    >
+                </div>
+
+                <!-- Error Message Box -->
+                <div id="login-error" class="hidden rounded-xl bg-red-950/80 border border-red-500/60 px-4 py-3 text-xs text-red-200 font-medium">
+                    Invalid username or password. Please verify your credentials and try again.
+                </div>
+
+                <button
+                    type="submit"
+                    id="login-submit-btn"
+                    class="w-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold text-sm py-3.5 px-5 rounded-xl shadow-lg shadow-blue-600/25 transition flex items-center justify-center gap-2"
+                >
+                    <span id="login-submit-text">Sign In &amp; Start Exam Session</span>
+                    <span>➔</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- ================= MAIN PORTAL SCREEN ================= -->
+    <div id="app-screen" class="hidden flex-1 flex flex-col max-w-3xl w-full mx-auto px-3.5 sm:px-6 pt-3 pb-10">
+
+        <!-- Sticky Top Navigation & Telemetry Bar -->
+        <header class="sticky top-0 z-20 bg-slate-950/95 backdrop-blur-md border-b border-slate-800 py-2.5 mb-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+                <!-- Left: Title & User -->
+                <div class="flex items-center gap-2.5">
+                    <span class="w-8 h-8 rounded-lg bg-blue-600/20 border border-blue-500/40 flex items-center justify-center text-blue-400 font-extrabold text-xs">
+                        v5
+                    </span>
+                    <div>
+                        <h1 class="text-xs sm:text-sm font-bold text-white leading-tight">ITIL® Foundation v5 Portal</h1>
+                        <div class="text-[11px] text-slate-400 flex flex-wrap items-center gap-1.5 sm:gap-2">
+                            <span id="user-badge" class="font-medium text-slate-300">User: student</span>
+                            <span id="role-badge" class="px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-800 text-slate-300">student</span>
+                            <span>•</span>
+                            <button id="btn-mode-toggle" onclick="requestModeSwitch()" class="text-blue-400 hover:text-blue-300 underline font-medium">
+                                Mode: 40 Qs (Exam)
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right: Timer & Control Buttons -->
+                <div class="flex flex-wrap items-center gap-1.5 sm:gap-2">
+                    <!-- Countdown Timer Badge -->
+                    <div id="timer-badge" class="flex items-center gap-1.5 bg-slate-900 border border-slate-700 text-slate-100 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-mono font-bold">
+                        <span>⏱</span>
+                        <span id="timer-display">60:00</span>
+                    </div>
+
+                    <!-- Admin-Only Manage Users Button -->
+                    <button
+                        id="btn-manage-users"
+                        onclick="openUserManagerModal()"
+                        title="Manage cryptographic users.json database"
+                        class="hidden bg-indigo-950/80 hover:bg-indigo-900 text-indigo-200 border border-indigo-700/80 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition"
+                    >
+                        👥 Manage Users (users.json)
+                    </button>
+
+                    <button
+                        onclick="requestFinishEarly()"
+                        title="End session now and grade answered questions"
+                        class="bg-slate-800 hover:bg-slate-700 text-slate-200 border border-slate-700 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition"
+                    >
+                        Recap / Finish
+                    </button>
+
+                    <button
+                        onclick="requestResetExam()"
+                        title="Reset timer and start a new randomized question set"
+                        class="bg-red-950/70 hover:bg-red-900/80 text-red-200 border border-red-800/80 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition"
+                    >
+                        Reset ↺
+                    </button>
+
+                    <button
+                        onclick="handleLogout()"
+                        title="Log out of the portal"
+                        class="bg-slate-900 hover:bg-slate-800 text-slate-400 hover:text-white border border-slate-800 rounded-lg px-2.5 py-1.5 text-xs font-semibold transition"
+                    >
+                        Logout
+                    </button>
+                </div>
+            </div>
+
+            <!-- Sub-bar: Progress & Live Score -->
+            <div class="mt-2.5 pt-2 border-t border-slate-800/70 flex items-center justify-between text-xs text-slate-400">
+                <div class="font-semibold">
+                    Question <span id="q-counter" class="text-white font-bold">1 / 40</span>
+                </div>
+                <div class="flex-1 mx-3 h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div id="progress-bar" class="h-full bg-blue-500 transition-all duration-300" style="width: 2.5%;"></div>
+                </div>
+                <div class="font-semibold">
+                    Score: <span id="score-counter" class="text-emerald-400 font-bold">0</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- ================= QUIZ VIEW ================= -->
+        <main id="quiz-view" class="flex-1 flex flex-col">
+            <!-- PDF Reference Badge -->
+            <div class="mb-2.5 flex items-center justify-between gap-2">
+                <span id="q-ref-badge" class="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-300 bg-blue-950/60 border border-blue-800/60 px-3 py-1 rounded-lg">
+                    📄 Study Guide PDF — Question #1
+                </span>
+                <span id="exam-pass-hint" class="text-[11px] text-slate-400">Pass mark: 65% (26/40)</span>
+            </div>
+
+            <!-- Question Stem Card -->
+            <div class="bg-slate-900/95 border border-slate-800 rounded-2xl p-4 sm:p-6 mb-4 shadow-lg">
+                <p id="q-text" class="text-base sm:text-lg font-semibold text-white leading-relaxed"></p>
+            </div>
+
+            <!-- 4 Touch-Friendly Option Buttons -->
+            <div class="space-y-2.5 mb-4" id="options-container">
+                <button id="btn-A" onclick="selectAnswer('A')" class="option-btn w-full text-left bg-slate-900/80 border-2 border-slate-800 rounded-xl p-3.5 sm:p-4 flex items-start gap-3.5">
+                    <span class="opt-badge inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-800 text-slate-200 font-bold text-sm shrink-0 mt-0.5">A</span>
+                    <span id="text-A" class="text-sm sm:text-base text-slate-100 leading-snug"></span>
+                </button>
+
+                <button id="btn-B" onclick="selectAnswer('B')" class="option-btn w-full text-left bg-slate-900/80 border-2 border-slate-800 rounded-xl p-3.5 sm:p-4 flex items-start gap-3.5">
+                    <span class="opt-badge inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-800 text-slate-200 font-bold text-sm shrink-0 mt-0.5">B</span>
+                    <span id="text-B" class="text-sm sm:text-base text-slate-100 leading-snug"></span>
+                </button>
+
+                <button id="btn-C" onclick="selectAnswer('C')" class="option-btn w-full text-left bg-slate-900/80 border-2 border-slate-800 rounded-xl p-3.5 sm:p-4 flex items-start gap-3.5">
+                    <span class="opt-badge inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-800 text-slate-200 font-bold text-sm shrink-0 mt-0.5">C</span>
+                    <span id="text-C" class="text-sm sm:text-base text-slate-100 leading-snug"></span>
+                </button>
+
+                <button id="btn-D" onclick="selectAnswer('D')" class="option-btn w-full text-left bg-slate-900/80 border-2 border-slate-800 rounded-xl p-3.5 sm:p-4 flex items-start gap-3.5">
+                    <span class="opt-badge inline-flex items-center justify-center w-7 h-7 rounded-lg bg-slate-800 text-slate-200 font-bold text-sm shrink-0 mt-0.5">D</span>
+                    <span id="text-D" class="text-sm sm:text-base text-slate-100 leading-snug"></span>
+                </button>
+            </div>
+
+            <!-- Immediate Feedback & PDF Rationale Box -->
+            <div id="feedback-box" class="hidden rounded-2xl p-4 sm:p-5 mb-4 border"></div>
+
+            <!-- Next Question Button -->
+            <button
+                id="btn-next"
+                onclick="nextQuestion()"
+                class="hidden w-full bg-blue-600 hover:bg-blue-500 active:bg-blue-700 text-white font-bold text-base py-4 px-6 rounded-xl shadow-lg shadow-blue-600/25 transition mb-6"
+            >
+                Next Question ➔
+            </button>
+        </main>
+
+        <!-- ================= FINAL RECAP VIEW ================= -->
+        <section id="recap-view" class="hidden flex-1 flex flex-col">
+            <!-- Summary Score Card -->
+            <div class="bg-slate-900 border border-slate-800 rounded-2xl p-6 text-center mb-5 shadow-xl">
+                <div id="recap-reason-banner" class="text-xs font-bold uppercase tracking-wider text-blue-400 mb-1">
+                    EXAM SESSION COMPLETED
+                </div>
+                <div id="final-score" class="text-3xl sm:text-4xl font-extrabold text-white my-2">
+                    0 / 40 (0.0%)
+                </div>
+                <div class="text-xs sm:text-sm text-slate-400 mb-3 flex flex-wrap items-center justify-center gap-3">
+                    <span>Official Pass Mark: <strong class="text-slate-200">65.0% (26/40)</strong></span>
+                    <span>•</span>
+                    <span>Time Spent: <strong id="time-spent-display" class="text-slate-200">00m 00s</strong></span>
+                </div>
+                <div id="final-badge" class="inline-block px-4 py-1.5 rounded-full text-xs sm:text-sm font-extrabold tracking-wide"></div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-6">
+                <button
+                    onclick="startNewSession(40)"
+                    class="w-full bg-blue-600 hover:bg-blue-500 text-white font-bold text-sm py-3.5 px-4 rounded-xl shadow-lg shadow-blue-600/20 transition"
+                >
+                    🔄 Start New 40-Question Exam (Random)
+                </button>
+                <button
+                    onclick="startNewSession(77)"
+                    class="w-full bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 font-bold text-sm py-3.5 px-4 rounded-xl transition"
+                >
+                    📚 Practice All 77 Questions (Full Pool)
+                </button>
+            </div>
+
+            <!-- Filter Tabs for Review -->
+            <div class="flex items-center justify-between border-b border-slate-800 pb-3 mb-4">
+                <h2 id="review-heading" class="text-sm sm:text-base font-bold text-white">
+                    Incorrect Answers Review
+                </h2>
+                <div class="flex gap-2">
+                    <button
+                        id="tab-wrong-only"
+                        onclick="setRecapFilter('wrong')"
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-950/80 text-red-200 border border-red-700/70"
+                    >
+                        Incorrect Only (<span id="count-wrong">0</span>)
+                    </button>
+                    <button
+                        id="tab-all-answered"
+                        onclick="setRecapFilter('all')"
+                        class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-400 border border-slate-800"
+                    >
+                        All Answered (<span id="count-all">0</span>)
+                    </button>
+                </div>
+            </div>
+
+            <!-- Detailed Question Review List -->
+            <div id="recap-list" class="space-y-3.5 pb-8"></div>
+        </section>
+    </div>
+
+    <!-- ================= ADMIN CRYPTOGRAPHIC USERS.JSON MODAL ================= -->
+    <div id="user-manager-modal" class="hidden fixed inset-0 z-50 bg-black/80 backdrop-blur-sm flex items-center justify-center p-3 sm:p-5 overflow-y-auto">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-2xl w-full p-5 sm:p-6 shadow-2xl my-auto max-h-[92vh] flex flex-col">
+            <!-- Modal Header -->
+            <div class="flex items-center justify-between pb-3.5 border-b border-slate-800 mb-4 shrink-0">
+                <div>
+                    <h2 class="text-base sm:text-lg font-extrabold text-white flex items-center gap-2">
+                        <span>🔐 Cryptographic User Database (`users.json`)</span>
+                        <span class="text-[11px] font-bold uppercase px-2 py-0.5 rounded bg-emerald-950 text-emerald-300 border border-emerald-700/60">AES-256-GCM + PBKDF2</span>
+                    </h2>
+                    <p class="text-xs text-slate-400 mt-0.5">
+                        Zero plaintext questions in index.html: the 77 questions exist only inside users.json encrypted per-user with AES-256-GCM + PBKDF2-HMAC-SHA256.
+                    </p>
+                </div>
+                <button onclick="closeUserManagerModal()" class="text-slate-400 hover:text-white bg-slate-800 hover:bg-slate-700 rounded-lg px-2.5 py-1 text-sm font-bold transition">
+                    ✕
+                </button>
+            </div>
+
+            <!-- Toast Banner inside User Manager -->
+            <div id="um-toast" class="hidden rounded-xl px-3.5 py-2.5 text-xs font-semibold mb-3 shrink-0"></div>
+
+            <!-- Scrollable Modal Body -->
+            <div class="overflow-y-auto pr-1 space-y-4 flex-1">
+
+                <!-- Add / Update User Form -->
+                <form id="add-user-form" class="bg-slate-950/90 border border-slate-800 rounded-xl p-4 space-y-3" novalidate>
+                    <div class="text-xs font-bold text-slate-200 uppercase tracking-wider">Add or Update User Credential Hash</div>
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5">
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Username</label>
+                            <input
+                                type="text"
+                                id="new-user-name"
+                                placeholder="e.g. m.rossi"
+                                required
+                                class="w-full bg-slate-900 border border-slate-700 focus:border-blue-500 rounded-lg px-3 py-2 text-xs text-white outline-none"
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Assign Password</label>
+                            <input
+                                type="text"
+                                id="new-user-pass"
+                                placeholder="e.g. StrongPass#2026"
+                                required
+                                class="w-full bg-slate-900 border border-slate-700 focus:border-blue-500 rounded-lg px-3 py-2 text-xs text-white outline-none"
+                            >
+                        </div>
+                        <div>
+                            <label class="block text-[11px] font-semibold text-slate-400 mb-1">Role</label>
+                            <select
+                                id="new-user-role"
+                                class="w-full bg-slate-900 border border-slate-700 focus:border-blue-500 rounded-lg px-3 py-2 text-xs text-white outline-none"
+                            >
+                                <option value="student">Student (Exam &amp; Study)</option>
+                                <option value="admin">Admin (Can Manage Users)</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                        <span class="text-[11px] text-slate-400">
+                            The plaintext password is never stored—only its 100,000-round PBKDF2-SHA256 hash is added to the table below.
+                        </span>
+                        <button
+                            type="submit"
+                            id="btn-add-hash"
+                            class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs px-4 py-2 rounded-lg transition shrink-0"
+                        >
+                            ➕ Generate Hash &amp; Add User
+                        </button>
+                    </div>
+                </form>
+
+                <!-- Users Hash Table -->
+                <div class="border border-slate-800 rounded-xl overflow-hidden bg-slate-950/60">
+                    <div class="flex flex-wrap items-center justify-between gap-2 px-4 py-2.5 bg-slate-900 border-b border-slate-800 text-xs">
+                        <span class="font-bold text-slate-200">Hashed Accounts in `users.json` (<span id="um-user-count">0</span>)</span>
+                        <span id="db-source-status" class="text-[11px] text-slate-400 font-mono">Source: ./users.json</span>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse text-xs">
+                            <thead>
+                                <tr class="border-b border-slate-800 text-slate-400 bg-slate-950/90">
+                                    <th class="py-2.5 px-3 font-semibold">Masked Label</th>
+                                    <th class="py-2.5 px-3 font-semibold">Username SHA-256</th>
+                                    <th class="py-2.5 px-3 font-semibold">PBKDF2 Salt &amp; Hash</th>
+                                    <th class="py-2.5 px-3 font-semibold">Role</th>
+                                    <th class="py-2.5 px-3 font-semibold text-right">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="um-users-tbody" class="divide-y divide-slate-800/70"></tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Cloudflare Pages Deployment Instructions & Import/Export -->
+                <div class="bg-blue-950/40 border border-blue-800/60 rounded-xl p-4 space-y-3">
+                    <div class="text-xs font-bold text-blue-300">
+                        ☁️ Cloudflare Pages Deployment Workflow (`./users.json`)
+                    </div>
+                    <p class="text-[11px] text-slate-300 leading-relaxed">
+                        Download the <code class="text-blue-300">users.json</code> file below and place it in the same root folder as <code class="text-blue-300">index.html</code> on Cloudflare Pages. Even if someone downloads <code class="text-blue-300">index.html</code> or <code class="text-blue-300">users.json</code>, they only see irreversible cryptographic hashes (SHA-256 + 100,000-iteration PBKDF2-HMAC-SHA256).
+                    </p>
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                        <button
+                            type="button"
+                            onclick="exportUsersJson()"
+                            class="bg-blue-600 hover:bg-blue-500 text-white font-bold text-xs py-2.5 px-3 rounded-lg transition flex items-center justify-center gap-1.5 shadow"
+                        >
+                            <span>⬇️ Download users.json</span>
+                        </button>
+                        <label class="bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-600 font-bold text-xs py-2.5 px-3 rounded-lg transition flex items-center justify-center gap-1.5 cursor-pointer">
+                            <span>📂 Load Existing users.json</span>
+                            <input type="file" id="import-users-file" accept=".json,application/json" class="hidden" onchange="importUsersJsonFile(event)">
+                        </label>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- Modal Footer -->
+            <div class="pt-3.5 mt-4 border-t border-slate-800 flex items-center justify-end shrink-0">
+                <button
+                    onclick="closeUserManagerModal()"
+                    class="px-5 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold transition"
+                >
+                    Done / Close
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= CUSTOM CONFIRMATION MODAL (No alert/confirm) ================= -->
+    <div id="custom-modal" class="hidden fixed inset-0 z-50 bg-black/75 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-900 border border-slate-700 rounded-2xl max-w-sm w-full p-5 shadow-2xl">
+            <h3 id="modal-title" class="text-base font-bold text-white mb-2">Confirm Action</h3>
+            <p id="modal-message" class="text-sm text-slate-300 mb-5 leading-relaxed"></p>
+            <div class="flex items-center justify-end gap-2.5">
+                <button
+                    id="modal-cancel-btn"
+                    onclick="closeModal()"
+                    class="px-4 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 text-slate-300 text-xs font-semibold transition"
+                >
+                    Cancel
+                </button>
+                <button
+                    id="modal-confirm-btn"
+                    class="px-4 py-2 rounded-xl bg-blue-600 hover:bg-blue-500 text-white text-xs font-bold transition"
+                >
+                    Confirm
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        /* =========================================================================
+           1. VOLATILE AUTHENTICATION & WEB CRYPTO PBKDF2-SHA256 ENGINE
+              - Zero sessionStorage / Zero localStorage
+              - Zero plaintext usernames or passwords in source code or users.json
+           ========================================================================= */
+        const PBKDF2_ITERATIONS = 100000;
+        let usersList = [];
+        let externalDbLoaded = false;
+        let currentUser = null; // Strictly volatile in-memory state (cleared on refresh)
+
+        /* =========================================================================
+           2. COMPLETE 77-QUESTION DATABASE (POINTING TO STUDY GUIDE PDF #1 - #77)
+           ========================================================================= */
+        let QUESTIONS_DB = []; // Zero plaintext in HTML! Populated in RAM only after AES-GCM decryption on login.
+
+        /* =========================================================================
+           3. STATE & SESSION VARIABLES
+           ========================================================================= */
+        const EXAM_DURATION_SECONDS = 60 * 60; // 60 minutes (3600 seconds)
+        let sessionModeCount = 40;             // Default: 40 questions (Official Exam Mode)
+        let sessionQuestions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let answeredHistory = [];              // Stores all answered items for review
+        let answeredCurrent = false;
+        let recapFilter = 'wrong';             // 'wrong' | 'all'
+
+        // Timer state
+        let remainingSeconds = EXAM_DURATION_SECONDS;
+        let timerInterval = null;
+        let modalCallback = null;
+
+        /* =========================================================================
+           4. CUSTOM MODAL DIALOG & CLIPBOARD HELPERS (No alert/confirm)
+           ========================================================================= */
+        function openModal(title, message, confirmText, onConfirm, showCancel = true) {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            const confirmBtn = document.getElementById('modal-confirm-btn');
+            const cancelBtn = document.getElementById('modal-cancel-btn');
+
+            confirmBtn.textContent = confirmText || 'Confirm';
+            cancelBtn.style.display = showCancel ? 'inline-block' : 'none';
+
+            modalCallback = onConfirm;
+            confirmBtn.onclick = () => {
+                const cb = modalCallback;
+                closeModal();
+                if (typeof cb === 'function') cb();
+            };
+
+            document.getElementById('custom-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('custom-modal').classList.add('hidden');
+            modalCallback = null;
+        }
+
+        function copyTextToClipboard(text) {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.focus();
+            ta.select();
+            try {
+                document.execCommand('copy');
+            } catch (err) {}
+            document.body.removeChild(ta);
+        }
+
+        /* =========================================================================
+           5. CRYPTOGRAPHIC PSEUDO-DATABASE (`./users.json`) & PBKDF2 VERIFICATION
+           ========================================================================= */
+        function bytesToHex(bytes) {
+            return Array.from(bytes).map(b => b.toString(16).padStart(2, '0')).join('');
+        }
+
+        function hexToBytes(hex) {
+            const clean = String(hex || '').replace(/[^0-9a-fA-F]/g, '');
+            const out = new Uint8Array(clean.length / 2);
+            for (let i = 0; i < out.length; i++) {
+                out[i] = parseInt(clean.substr(i * 2, 2), 16);
+            }
+            return out;
+        }
+
+        function timingSafeEqualHex(a, b) {
+            const strA = String(a || '').toLowerCase();
+            const strB = String(b || '').toLowerCase();
+            if (strA.length !== strB.length || strA.length === 0) return false;
+            let diff = 0;
+            for (let i = 0; i < strA.length; i++) {
+                diff |= (strA.charCodeAt(i) ^ strB.charCodeAt(i));
+            }
+            return diff === 0;
+        }
+
+        function maskUsernameLabel(username) {
+            const clean = String(username || '').trim().toLowerCase();
+            if (clean.length <= 2) return clean[0] + '*';
+            return clean[0] + '*'.repeat(Math.min(clean.length - 2, 5)) + clean[clean.length - 1];
+        }
+
+        async function sha256Hex(text) {
+            const data = new TextEncoder().encode(String(text));
+            const digest = await crypto.subtle.digest('SHA-256', data);
+            return bytesToHex(new Uint8Array(digest));
+        }
+
+        async function pbkdf2Hex(password, saltHex, iterations = PBKDF2_ITERATIONS) {
+            const enc = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                enc.encode(String(password)),
+                { name: 'PBKDF2' },
+                false,
+                ['deriveBits']
+            );
+            const derivedBits = await crypto.subtle.deriveBits(
+                {
+                    name: 'PBKDF2',
+                    salt: hexToBytes(saltHex),
+                    iterations: Number(iterations) || PBKDF2_ITERATIONS,
+                    hash: 'SHA-256'
+                },
+                keyMaterial,
+                256
+            );
+            return bytesToHex(new Uint8Array(derivedBits));
+        }
+
+        async function deriveAesGcmKey(password, saltHex, iterations = PBKDF2_ITERATIONS) {
+            const enc = new TextEncoder();
+            const keyMaterial = await crypto.subtle.importKey(
+                'raw',
+                enc.encode(String(password)),
+                { name: 'PBKDF2' },
+                false,
+                ['deriveKey']
+            );
+            const saltBytes = hexToBytes(saltHex);
+            const suffix = enc.encode('_AES');
+            const combinedSalt = new Uint8Array(saltBytes.length + suffix.length);
+            combinedSalt.set(saltBytes, 0);
+            combinedSalt.set(suffix, saltBytes.length);
+
+            return crypto.subtle.deriveKey(
+                {
+                    name: 'PBKDF2',
+                    salt: combinedSalt,
+                    iterations: Number(iterations) || PBKDF2_ITERATIONS,
+                    hash: 'SHA-256'
+                },
+                keyMaterial,
+                { name: 'AES-GCM', length: 256 },
+                false,
+                ['encrypt', 'decrypt']
+            );
+        }
+
+        function uint8ToBase64(bytes) {
+            let binary = '';
+            const chunkSize = 0x8000;
+            for (let i = 0; i < bytes.length; i += chunkSize) {
+                binary += String.fromCharCode.apply(null, bytes.subarray(i, i + chunkSize));
+            }
+            return btoa(binary);
+        }
+
+        function base64ToUint8(b64) {
+            const binary = atob(String(b64 || '').trim());
+            const out = new Uint8Array(binary.length);
+            for (let i = 0; i < binary.length; i++) {
+                out[i] = binary.charCodeAt(i);
+            }
+            return out;
+        }
+
+        async function encryptQuestionsForUser(password, saltHex, questionsArray, iterations = PBKDF2_ITERATIONS) {
+            const key = await deriveAesGcmKey(password, saltHex, iterations);
+            const iv = new Uint8Array(12);
+            crypto.getRandomValues(iv);
+            const encoded = new TextEncoder().encode(JSON.stringify(questionsArray));
+            const cipherBuffer = await crypto.subtle.encrypt(
+                { name: 'AES-GCM', iv: iv },
+                key,
+                encoded
+            );
+            const cipherBytes = new Uint8Array(cipherBuffer);
+            const combined = new Uint8Array(iv.length + cipherBytes.length);
+            combined.set(iv, 0);
+            combined.set(cipherBytes, iv.length);
+            return uint8ToBase64(combined);
+        }
+
+        async function decryptQuestionsForUser(password, saltHex, encryptedPayloadB64, iterations = PBKDF2_ITERATIONS) {
+            try {
+                const key = await deriveAesGcmKey(password, saltHex, iterations);
+                const combined = base64ToUint8(encryptedPayloadB64);
+                if (combined.length <= 12) return null;
+                const iv = combined.slice(0, 12);
+                const cipherBytes = combined.slice(12);
+                const plainBuffer = await crypto.subtle.decrypt(
+                    { name: 'AES-GCM', iv: iv },
+                    key,
+                    cipherBytes
+                );
+                const plainText = new TextDecoder().decode(plainBuffer);
+                const parsed = JSON.parse(plainText);
+                return Array.isArray(parsed) && parsed.length > 0 ? parsed : null;
+            } catch (e) {
+                return null;
+            }
+        }
+
+        async function createHashedUserRecord(username, password, role) {
+            if (!Array.isArray(QUESTIONS_DB) || QUESTIONS_DB.length === 0) {
+                throw new Error("Question database is not unlocked in RAM.");
+            }
+            const cleanUser = String(username || '').trim().toLowerCase();
+            const saltBytes = new Uint8Array(16);
+            crypto.getRandomValues(saltBytes);
+            const saltHex = bytesToHex(saltBytes);
+            const uHash = await sha256Hex(cleanUser);
+            const passHash = await pbkdf2Hex(password, saltHex, PBKDF2_ITERATIONS);
+            const encryptedPayload = await encryptQuestionsForUser(password, saltHex, QUESTIONS_DB, PBKDF2_ITERATIONS);
+
+            return {
+                uHash: uHash,
+                label: maskUsernameLabel(cleanUser),
+                role: role === 'admin' ? 'admin' : 'student',
+                salt: saltHex,
+                iterations: PBKDF2_ITERATIONS,
+                hash: passHash,
+                encryptedPayload: encryptedPayload
+            };
+        }
+
+        function sanitizeExternalUserRecords(arr) {
+            if (!Array.isArray(arr)) return [];
+            return arr.filter(r =>
+                r &&
+                typeof r.uHash === 'string' &&
+                typeof r.salt === 'string' &&
+                typeof r.hash === 'string' &&
+                typeof r.encryptedPayload === 'string'
+            ).map(r => ({
+                uHash: r.uHash.trim().toLowerCase(),
+                label: String(r.label || '***'),
+                role: r.role === 'admin' ? 'admin' : 'student',
+                salt: r.salt.trim().toLowerCase(),
+                iterations: Number(r.iterations) || PBKDF2_ITERATIONS,
+                hash: r.hash.trim().toLowerCase(),
+                encryptedPayload: r.encryptedPayload.trim()
+            }));
+        }
+
+        async function loadUsersDatabaseFromServer() {
+            try {
+                const resp = await fetch('./users.json?t=' + Date.now(), { cache: 'no-store' });
+                if (resp.ok) {
+                    const data = await resp.json();
+                    const valid = sanitizeExternalUserRecords(data);
+                    if (valid.length > 0) {
+                        usersList = valid;
+                        externalDbLoaded = true;
+                        return;
+                    }
+                }
+            } catch (e) {}
+            externalDbLoaded = false;
+        }
+
+        async function authenticateCredentials(usernameInput, passwordInput) {
+            const uname = String(usernameInput || '').trim().toLowerCase();
+            const upass = String(passwordInput || '');
+            if (!uname || !upass) return null;
+
+            await loadUsersDatabaseFromServer();
+            if (usersList.length === 0) {
+                return { error: "missing_db" };
+            }
+
+            const inputUHash = await sha256Hex(uname);
+            const candidate = usersList.find(u => timingSafeEqualHex(u.uHash, inputUHash));
+            if (!candidate) return null;
+
+            const derivedHash = await pbkdf2Hex(upass, candidate.salt, candidate.iterations);
+            if (!timingSafeEqualHex(derivedHash, candidate.hash)) return null;
+
+            const unlockedQuestions = await decryptQuestionsForUser(
+                upass,
+                candidate.salt,
+                candidate.encryptedPayload,
+                candidate.iterations
+            );
+            if (!unlockedQuestions) return null;
+
+            QUESTIONS_DB = unlockedQuestions;
+            return {
+                username: uname,
+                uHash: candidate.uHash,
+                role: candidate.role
+            };
+        }
+
+        document.getElementById('login-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const userInp = document.getElementById('username').value.trim().toLowerCase();
+            const passInp = document.getElementById('password').value;
+            const errBox = document.getElementById('login-error');
+            const submitBtn = document.getElementById('login-submit-btn');
+            const submitTxt = document.getElementById('login-submit-text');
+
+            submitBtn.disabled = true;
+            submitTxt.textContent = "Decrypting AES-GCM Question Bank...";
+            errBox.classList.add('hidden');
+
+            try {
+                const authResult = await authenticateCredentials(userInp, passInp);
+                if (authResult && authResult.error === "missing_db") {
+                    errBox.textContent = "Unable to load './users.json'. Ensure users.json is deployed in the same folder as index.html.";
+                    errBox.classList.remove('hidden');
+                } else if (authResult) {
+                    document.getElementById('username').value = '';
+                    document.getElementById('password').value = '';
+                    enterPortal(authResult);
+                } else {
+                    errBox.textContent = "Invalid username or password. Unable to unlock encrypted question bank.";
+                    errBox.classList.remove('hidden');
+                }
+            } finally {
+                submitBtn.disabled = false;
+                submitTxt.textContent = "Sign In & Start Exam Session";
+            }
+        });
+
+        function enterPortal(userObj) {
+            currentUser = userObj;
+            document.getElementById('user-badge').textContent = `User: ${userObj.username}`;
+            const roleBadge = document.getElementById('role-badge');
+            roleBadge.textContent = userObj.role;
+            if (userObj.role === 'admin') {
+                roleBadge.className = "px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-indigo-950 text-indigo-300 border border-indigo-700/60";
+                document.getElementById('btn-manage-users').classList.remove('hidden');
+            } else {
+                roleBadge.className = "px-1.5 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-800 text-slate-300";
+                document.getElementById('btn-manage-users').classList.add('hidden');
+            }
+
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('app-screen').classList.remove('hidden');
+            startNewSession(40);
+        }
+
+        function handleLogout() {
+            stopTimer();
+            currentUser = null;
+            QUESTIONS_DB = [];
+            sessionQuestions = [];
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            document.getElementById('app-screen').classList.add('hidden');
+            document.getElementById('login-screen').classList.remove('hidden');
+        }
+
+        /* =========================================================================
+           5B. ADMIN CRYPTOGRAPHIC `users.json` MANAGER UI FUNCTIONS
+           ========================================================================= */
+        function showUserManagerToast(msg, isError = false) {
+            const toast = document.getElementById('um-toast');
+            toast.textContent = msg;
+            toast.className = isError
+                ? "rounded-xl px-3.5 py-2.5 text-xs font-semibold mb-3 shrink-0 bg-red-950/90 border border-red-500/70 text-red-200"
+                : "rounded-xl px-3.5 py-2.5 text-xs font-semibold mb-3 shrink-0 bg-emerald-950/90 border border-emerald-500/70 text-emerald-200";
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 4500);
+        }
+
+        function openUserManagerModal() {
+            if (!currentUser || currentUser.role !== 'admin') return;
+            renderUsersTable();
+            document.getElementById('user-manager-modal').classList.remove('hidden');
+        }
+
+        function closeUserManagerModal() {
+            document.getElementById('user-manager-modal').classList.add('hidden');
+        }
+
+        function renderUsersTable() {
+            const tbody = document.getElementById('um-users-tbody');
+            document.getElementById('um-user-count').textContent = usersList.length;
+            const statusEl = document.getElementById('db-source-status');
+            statusEl.textContent = externalDbLoaded
+                ? "Source: ./users.json (Active)"
+                : "Source: In-Memory (Download users.json to deploy)";
+            tbody.innerHTML = '';
+
+            usersList.forEach(u => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-900/60 transition";
+
+                const rolePill = u.role === 'admin'
+                    ? `<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-indigo-950 text-indigo-300 border border-indigo-700/60">admin</span>`
+                    : `<span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-slate-800 text-slate-300">student</span>`;
+
+                const shortUHash = `${u.uHash.slice(0, 10)}…${u.uHash.slice(-6)}`;
+                const shortPHash = `salt:${u.salt.slice(0, 8)}… | aes-gcm:${(u.encryptedPayload || '').slice(0, 10)}… (${Math.round((u.encryptedPayload || '').length / 1024)}KB)`;
+
+                tr.innerHTML = `
+                    <td class="py-2.5 px-3 font-mono font-bold text-white">${u.label || '***'}</td>
+                    <td class="py-2.5 px-3 font-mono text-slate-400 text-[11px]" title="${u.uHash}">${shortUHash}</td>
+                    <td class="py-2.5 px-3 font-mono text-emerald-400 text-[11px]" title="Iterations: ${u.iterations}">${shortPHash}</td>
+                    <td class="py-2.5 px-3">${rolePill}</td>
+                    <td class="py-2.5 px-3 text-right whitespace-nowrap">
+                        <button
+                            type="button"
+                            onclick="deleteUserAccount('${u.uHash}')"
+                            class="bg-red-950/70 hover:bg-red-900 text-red-300 border border-red-800/70 px-2.5 py-1 rounded text-[11px] font-semibold transition"
+                        >
+                            🗑 Remove
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        document.getElementById('add-user-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+            const uname = document.getElementById('new-user-name').value.trim().toLowerCase();
+            const upass = document.getElementById('new-user-pass').value;
+            const urole = document.getElementById('new-user-role').value === 'admin' ? 'admin' : 'student';
+            const btn = document.getElementById('btn-add-hash');
+
+            if (!uname || !upass) {
+                showUserManagerToast("Please enter both a username and a password.", true);
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "Computing PBKDF2 (100k)...";
+
+            try {
+                const newRecord = await createHashedUserRecord(uname, upass, urole);
+                const existingIdx = usersList.findIndex(u => timingSafeEqualHex(u.uHash, newRecord.uHash));
+
+                if (existingIdx >= 0) {
+                    const adminCount = usersList.filter(u => u.role === 'admin').length;
+                    if (usersList[existingIdx].role === 'admin' && urole !== 'admin' && adminCount <= 1) {
+                        showUserManagerToast("Cannot remove admin role from the last remaining administrator.", true);
+                        return;
+                    }
+                    usersList[existingIdx] = newRecord;
+                    showUserManagerToast(`✅ Updated PBKDF2-SHA256 hash for "${uname}" (${urole}). Remember to download users.json!`);
+                } else {
+                    usersList.push(newRecord);
+                    showUserManagerToast(`✅ Added PBKDF2-SHA256 hash for "${uname}" (${urole}). Remember to download users.json!`);
+                }
+
+                renderUsersTable();
+                document.getElementById('new-user-name').value = '';
+                document.getElementById('new-user-pass').value = '';
+            } finally {
+                btn.disabled = false;
+                btn.textContent = "➕ Generate Hash & Add User";
+            }
+        });
+
+        function deleteUserAccount(targetUHash) {
+            const target = usersList.find(u => timingSafeEqualHex(u.uHash, targetUHash));
+            if (!target) return;
+
+            const adminCount = usersList.filter(u => u.role === 'admin').length;
+            if (target.role === 'admin' && adminCount <= 1) {
+                showUserManagerToast("Cannot delete the last remaining administrator account!", true);
+                return;
+            }
+
+            usersList = usersList.filter(u => !timingSafeEqualHex(u.uHash, targetUHash));
+            renderUsersTable();
+            showUserManagerToast(`🗑 Removed user account (${target.label}). Download users.json to update your server.`);
+        }
+
+        function exportUsersJson() {
+            const jsonStr = JSON.stringify(usersList, null, 2);
+            const blob = new Blob([jsonStr], { type: 'application/json;charset=utf-8' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'users.json';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            showUserManagerToast("⬇️ Downloaded 'users.json' (contains only SHA-256 & PBKDF2 hashes). Upload it alongside index.html on Cloudflare Pages!");
+        }
+
+        function importUsersJsonFile(event) {
+            const file = event.target.files && event.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                try {
+                    const parsed = JSON.parse(e.target.result);
+                    const valid = sanitizeExternalUserRecords(parsed);
+                    if (valid.length === 0) {
+                        showUserManagerToast("Invalid users.json file: no valid hashed records found.", true);
+                        return;
+                    }
+                    usersList = valid;
+                    externalDbLoaded = true;
+                    renderUsersTable();
+                    showUserManagerToast(`📂 Loaded ${valid.length} hashed accounts from users.json.`);
+                } catch (err) {
+                    showUserManagerToast("Failed to parse JSON file.", true);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        /* =========================================================================
+           6. FISHER-YATES SHUFFLE & TIMER ENGINE
+           ========================================================================= */
+        function shuffleArray(arr) {
+            const copy = [...arr];
+            for (let i = copy.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [copy[i], copy[j]] = [copy[j], copy[i]];
+            }
+            return copy;
+        }
+
+        function formatMMSS(totalSec) {
+            const m = Math.floor(totalSec / 60);
+            const s = totalSec % 60;
+            return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+        }
+
+        function startTimer() {
+            stopTimer();
+            remainingSeconds = EXAM_DURATION_SECONDS;
+            updateTimerUI();
+
+            timerInterval = setInterval(() => {
+                remainingSeconds--;
+                if (remainingSeconds <= 0) {
+                    remainingSeconds = 0;
+                    updateTimerUI();
+                    stopTimer();
+                    showRecap(answeredHistory.length, true);
+                } else {
+                    updateTimerUI();
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            if (timerInterval) {
+                clearInterval(timerInterval);
+                timerInterval = null;
+            }
+        }
+
+        function updateTimerUI() {
+            const display = document.getElementById('timer-display');
+            const badge = document.getElementById('timer-badge');
+            display.textContent = formatMMSS(remainingSeconds);
+
+            badge.className = "flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs sm:text-sm font-mono font-bold border transition ";
+            if (remainingSeconds < 300) {
+                // < 5 minutes: pulsing critical red
+                badge.className += "timer-critical text-red-100";
+            } else if (remainingSeconds < 600) {
+                // < 10 minutes: warning amber
+                badge.className += "bg-amber-950/90 border-amber-500 text-amber-200";
+            } else {
+                badge.className += "bg-slate-900 border-slate-700 text-slate-100";
+            }
+        }
+
+        /* =========================================================================
+           7. EXAM SESSION MANAGEMENT
+           ========================================================================= */
+        function startNewSession(questionCount) {
+            sessionModeCount = questionCount || 40;
+            const shuffled = shuffleArray(QUESTIONS_DB);
+            sessionQuestions = shuffled.slice(0, sessionModeCount);
+            currentIndex = 0;
+            score = 0;
+            answeredHistory = [];
+            answeredCurrent = false;
+
+            // Update Mode Toggle label & Pass Hint
+            const modeBtn = document.getElementById('btn-mode-toggle');
+            const passHint = document.getElementById('exam-pass-hint');
+            if (sessionModeCount === 40) {
+                modeBtn.textContent = "Mode: 40 Qs (Exam) ⇄";
+                passHint.textContent = "Pass mark: 65% (26/40)";
+            } else {
+                modeBtn.textContent = "Mode: All 77 Qs (Full Pool) ⇄";
+                passHint.textContent = "Pass mark: 65% (51/77)";
+            }
+
+            document.getElementById('recap-view').classList.add('hidden');
+            document.getElementById('quiz-view').classList.remove('hidden');
+
+            startTimer();
+            renderQuestion();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function requestModeSwitch() {
+            const targetCount = sessionModeCount === 40 ? 77 : 40;
+            const targetLabel = targetCount === 40
+                ? "40-Question Official Exam Simulation (60 Min)"
+                : "Full 77-Question Practice Pool (60 Min)";
+
+            openModal(
+                "Switch Practice Mode?",
+                `Do you want to switch to the ${targetLabel}? Your current session progress will be reset.`,
+                `Switch to ${targetCount} Qs`,
+                () => startNewSession(targetCount)
+            );
+        }
+
+        function requestResetExam() {
+            openModal(
+                "Reset Exam Session?",
+                `This will reset the 60:00 countdown timer, draw a new random set of ${sessionModeCount} questions, and restart from Question 1.`,
+                "Reset Now ↺",
+                () => startNewSession(sessionModeCount)
+            );
+        }
+
+        function requestFinishEarly() {
+            if (answeredHistory.length === 0) {
+                openModal(
+                    "No Questions Answered Yet",
+                    "Please answer at least one question before finishing the session and viewing the recap.",
+                    "OK",
+                    null,
+                    false
+                );
+                return;
+            }
+            openModal(
+                "Finish & Grade Session Now?",
+                `You have answered ${answeredHistory.length} out of ${sessionQuestions.length} questions. Do you want to stop the timer and view your final score and rationales?`,
+                "View Final Recap",
+                () => {
+                    stopTimer();
+                    showRecap(answeredHistory.length, false);
+                }
+            );
+        }
+
+        /* =========================================================================
+           8. QUESTION RENDERING & IMMEDIATE FEEDBACK
+           ========================================================================= */
+        function renderQuestion() {
+            if (currentIndex >= sessionQuestions.length) {
+                stopTimer();
+                showRecap(sessionQuestions.length, false);
+                return;
+            }
+
+            answeredCurrent = false;
+            const q = sessionQuestions[currentIndex];
+            const total = sessionQuestions.length;
+
+            document.getElementById('q-counter').textContent = `${currentIndex + 1} / ${total}`;
+            document.getElementById('score-counter').textContent = `${score}`;
+            document.getElementById('progress-bar').style.width = `${((currentIndex + 1) / total) * 100}%`;
+
+            document.getElementById('q-ref-badge').textContent = `📄 ${q.ref}`;
+            document.getElementById('q-text').textContent = q.question;
+
+            ['A', 'B', 'C', 'D'].forEach(letter => {
+                const btn = document.getElementById('btn-' + letter);
+                btn.disabled = false;
+                btn.classList.remove('correct', 'wrong');
+                document.getElementById('text-' + letter).textContent = q.options[letter];
+            });
+
+            const fb = document.getElementById('feedback-box');
+            fb.className = 'hidden rounded-2xl p-4 sm:p-5 mb-4 border';
+            fb.innerHTML = '';
+
+            document.getElementById('btn-next').classList.add('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function selectAnswer(choice) {
+            if (answeredCurrent) return;
+            answeredCurrent = true;
+
+            const q = sessionQuestions[currentIndex];
+            const correct = q.answer;
+            const isCorrect = (choice === correct);
+
+            ['A', 'B', 'C', 'D'].forEach(letter => {
+                document.getElementById('btn-' + letter).disabled = true;
+            });
+
+            const fb = document.getElementById('feedback-box');
+
+            if (isCorrect) {
+                score++;
+                document.getElementById('score-counter').textContent = `${score}`;
+                document.getElementById('btn-' + choice).classList.add('correct');
+
+                fb.className = 'block rounded-2xl p-4 sm:p-5 mb-4 border bg-emerald-950/60 border-emerald-500/70 text-emerald-100';
+                fb.innerHTML = `
+                    <div class="font-extrabold text-base text-emerald-300 mb-1">
+                        ✅ CORRECT! (Option ${correct})
+                    </div>
+                    <div class="text-sm text-emerald-100/90 mb-3 font-medium">
+                        ${q.options[correct]}
+                    </div>
+                    <div class="pt-3 border-t border-emerald-700/50 text-xs sm:text-sm text-amber-200 leading-relaxed">
+                        <strong>💡 Study Guide Rationale (${q.ref}):</strong> ${q.rationale}
+                    </div>
+                `;
+            } else {
+                document.getElementById('btn-' + choice).classList.add('wrong');
+                document.getElementById('btn-' + correct).classList.add('correct');
+
+                fb.className = 'block rounded-2xl p-4 sm:p-5 mb-4 border bg-red-950/60 border-red-500/70 text-red-100';
+                fb.innerHTML = `
+                    <div class="font-extrabold text-base text-red-300 mb-1">
+                        ❌ INCORRECT! You selected Option ${choice} — Correct Answer: Option ${correct}
+                    </div>
+                    <div class="text-sm text-emerald-300 mb-3 font-semibold">
+                        ✓ ${correct}. ${q.options[correct]}
+                    </div>
+                    <div class="pt-3 border-t border-red-800/60 text-xs sm:text-sm text-amber-200 leading-relaxed">
+                        <strong>💡 Study Guide Rationale (${q.ref}):</strong> ${q.rationale}
+                    </div>
+                `;
+            }
+
+            answeredHistory.push({
+                sessionNum: currentIndex + 1,
+                q: q,
+                userChoice: choice,
+                isCorrect: isCorrect
+            });
+
+            const nextBtn = document.getElementById('btn-next');
+            nextBtn.textContent = (currentIndex + 1 === sessionQuestions.length)
+                ? "View Final Recap ➔"
+                : "Next Question ➔";
+            nextBtn.classList.remove('hidden');
+
+            setTimeout(() => {
+                nextBtn.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            }, 100);
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            renderQuestion();
+        }
+
+        /* =========================================================================
+           9. FINAL RECAP & RATIONALE REVIEW
+           ========================================================================= */
+        function showRecap(totalDenominator, timeExpired) {
+            document.getElementById('quiz-view').classList.add('hidden');
+            document.getElementById('recap-view').classList.remove('hidden');
+
+            const denom = totalDenominator > 0 ? totalDenominator : sessionQuestions.length;
+            const pct = denom > 0 ? ((score / denom) * 100).toFixed(1) : "0.0";
+            const passed = parseFloat(pct) >= 65.0;
+
+            const elapsedSeconds = EXAM_DURATION_SECONDS - remainingSeconds;
+            const elapsedMin = Math.floor(elapsedSeconds / 60);
+            const elapsedSec = elapsedSeconds % 60;
+
+            const reasonBanner = document.getElementById('recap-reason-banner');
+            if (timeExpired) {
+                reasonBanner.textContent = "⏰ TIME EXPIRED (60:00 ELAPSED)";
+                reasonBanner.className = "text-xs font-bold uppercase tracking-wider text-red-400 mb-1";
+            } else {
+                reasonBanner.textContent = "EXAM SESSION COMPLETED";
+                reasonBanner.className = "text-xs font-bold uppercase tracking-wider text-blue-400 mb-1";
+            }
+
+            document.getElementById('final-score').textContent = `${score} / ${denom} (${pct}%)`;
+            document.getElementById('time-spent-display').textContent = `${String(elapsedMin).padStart(2, '0')}m ${String(elapsedSec).padStart(2, '0')}s`;
+
+            const badge = document.getElementById('final-badge');
+            if (passed) {
+                badge.className = "inline-block px-4 py-1.5 rounded-full text-xs sm:text-sm font-extrabold tracking-wide bg-emerald-950 text-emerald-300 border border-emerald-500";
+                badge.textContent = "✅ PASSED (Meets 65% ITIL v5 Requirement)";
+            } else {
+                badge.className = "inline-block px-4 py-1.5 rounded-full text-xs sm:text-sm font-extrabold tracking-wide bg-red-950 text-red-300 border border-red-500";
+                badge.textContent = "❌ FAILED (Below 65% ITIL v5 Requirement)";
+            }
+
+            const wrongCount = answeredHistory.filter(i => !i.isCorrect).length;
+            document.getElementById('count-wrong').textContent = wrongCount;
+            document.getElementById('count-all').textContent = answeredHistory.length;
+
+            setRecapFilter(wrongCount > 0 ? 'wrong' : 'all');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function setRecapFilter(mode) {
+            recapFilter = mode;
+            const tabWrong = document.getElementById('tab-wrong-only');
+            const tabAll = document.getElementById('tab-all-answered');
+            const heading = document.getElementById('review-heading');
+
+            if (mode === 'wrong') {
+                tabWrong.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-950/90 text-red-200 border border-red-600";
+                tabAll.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-400 border border-slate-800";
+                heading.textContent = "Incorrect Answers Review";
+            } else {
+                tabAll.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-blue-950/90 text-blue-200 border border-blue-600";
+                tabWrong.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-900 text-slate-400 border border-slate-800";
+                heading.textContent = "All Answered Questions Review";
+            }
+
+            renderRecapList();
+        }
+
+        function renderRecapList() {
+            const container = document.getElementById('recap-list');
+            container.innerHTML = '';
+
+            const items = recapFilter === 'wrong'
+                ? answeredHistory.filter(item => !item.isCorrect)
+                : answeredHistory;
+
+            if (items.length === 0) {
+                container.innerHTML = `
+                    <div class="bg-slate-900/80 border border-slate-800 rounded-2xl p-6 text-center text-sm text-emerald-300 font-semibold">
+                        🎉 Flawless performance! No incorrect answers to display in this view.
+                    </div>
+                `;
+                return;
+            }
+
+            items.forEach(item => {
+                const q = item.q;
+                const borderClass = item.isCorrect ? 'border-l-4 border-l-emerald-500' : 'border-l-4 border-l-red-500';
+                const card = document.createElement('div');
+                card.className = `bg-slate-900 border border-slate-800 ${borderClass} rounded-xl p-4 sm:p-5 space-y-2`;
+
+                const userLine = item.isCorrect
+                    ? `<div class="text-xs sm:text-sm text-emerald-300 font-semibold">✅ Your Answer: ${item.userChoice}. ${q.options[item.userChoice]}</div>`
+                    : `<div class="text-xs sm:text-sm text-red-300 font-medium">❌ Your Answer: ${item.userChoice}. ${q.options[item.userChoice]}</div>
+                       <div class="text-xs sm:text-sm text-emerald-300 font-semibold">✅ Correct Answer: ${q.answer}. ${q.options[q.answer]}</div>`;
+
+                card.innerHTML = `
+                    <div class="flex items-center justify-between text-xs text-slate-400">
+                        <span class="font-bold text-slate-300">Session Question #${item.sessionNum}</span>
+                        <span class="bg-slate-950 border border-slate-800 text-blue-300 px-2.5 py-0.5 rounded-md font-semibold">📄 ${q.ref}</span>
+                    </div>
+                    <p class="text-sm sm:text-base font-semibold text-white leading-snug">${q.question}</p>
+                    <div class="space-y-1 pt-1">${userLine}</div>
+                    <div class="pt-2.5 mt-2 border-t border-slate-800 text-xs sm:text-sm text-amber-200/95 leading-relaxed">
+                        <strong>💡 Rationale:</strong> ${q.rationale}
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        /* =========================================================================
+           10. INITIALIZATION (NO SESSION PERSISTENCE)
+           ========================================================================= */
+        window.onload = async function () {
+            await loadUsersDatabaseFromServer();
+        };
+    </script>
+</body>
+</html>
