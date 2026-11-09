@@ -2,7 +2,7 @@
   {
     "uHash": "0a041b9462caa4a31bac3567e0b6e6fd9100787db2ab433d96f6d178cabfce90",
     "label": "u***1",
-    "role": "student",
+    "role": "admin",
     "salt": "335b9b945ce2079661fac635e1e2d4fc",
     "iterations": 100000,
     "hash": "a3fc7607f5972c278db1425a1bf09b202455a213dbf2c7198448e4fba4c411ec",
